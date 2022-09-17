@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Tabela e Formulário Disciplina</title>
+    <meta charset="utf-8">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container p-3">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card d-flex aling-center">
+                    <div class="card-header">
+                        Tabela e Formulário Disciplina
+                    </div>
+                    <div class="card-body">
+                        <form autocomplete="off">
+                            <input type="hidden" value="0" name="id" />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="row  p-2">
+                                        <div class="col-md">
+                                            <label>Nome Disciplina:</label>
+                                            <input class="form-control" type="text" name="nome" size="25" required>
+                                        </div>
+                                    </div>
+                                    <div class="row  p-2">
+                                        <div class="col-md">
+                                            <label>Sigla:</label>
+                                            <input class="form-control" type="text" name="sigla" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-5">
+                                <div class="col-md-12 d-flex">
+                                    <button type="button" data-event="submit" style="max-width: 200px;"
+                                        class="btn btn-primary">Salvar</button>
+                                    <span style="flex:1"></span>
+                                    <button type="button" onclick="reset(event)" style="max-width: 200px;"
+                                        class="btn btn-default float-right">Limpar</button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="_actived-tab" data-bs-toggle="tab"
+                                    data-bs-target="#_actived" type="button" role="tab" aria-controls="_actived"
+                                    aria-selected="true">Ativos</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="_actived" role="tabpanel"
+                                aria-labelledby="ative-tab">
+                                <div class="table-responsive">
+                                    <table id="grid" class="table table-bordered table-striped table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th style="cursor: pointer;" onclick="sortTable(event,1)">Nome <i
+                                                        class="bi bi-chevron-down"></i>
+                                                </th>
+                                                <th style="cursor: pointer;" onclick="sortTable(event,2)">Sigla <i
+                                                        class="bi bi-chevron-down"></i>
+                                                </th>
+                                                <th class="text-center">Ações</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="toast-container position-absolute top-0 end-0 m-5">
+            <div id="toast-container" data-bs-autohide="false"
+                class="toast algin-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+                aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        "Sucesso!"🎉🎉
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        arial-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        const API_URL = "http://localhost:5001/api";
+        const form = document.querySelector('form')
+        const submitRef = document.querySelector('button[data-event="submit"]');
+
+        (function () {
+            'use strict'
+
+            var toatInstance = new bootstrap.Toast(document.getElementById('toast-container'));
+            var grid = $('#grid');
+
+            const postResponse = async (response) => {
+                toatInstance.show();
+                reset();
+                form.classList.remove("was-validated");
+
+                if (response.id !== 0)
+                    grid.find(`#${response.id}`).remove();
+
+                grid.append($('<tr></tr>').attr('id', response.id).attr('data-src', JSON.stringify(response))
+                    .append($('<td></td>').html(response.nome))
+                    .append($('<td></td>').html(response.sigla))
+                    .append($('<td class="text-center"></td>').html(`<button class="btn btn-info btn-sm" onclick="edit(event)"> Editar</button><button class="btn btn-danger btn-sm ml-3 text-dark" onclick="remove(event)"> Apagar</button>`))
+                );
+
+            }
+
+            window.addEventListener("load", function () {
+
+                fetch(`${API_URL}/Disciplina/listAll`)
+                    .then(async (request) => await request.json())
+                    .then(response => {
+                        for (let i = 0; i < response.length; i++) {
+                            let dados = response[i];
+                            $('#grid').find(`#${dados.id}`).remove();
+
+                            $('#grid').append($('<tr></tr>').attr('id', dados.id).attr('data-src', JSON.stringify(dados))
+                                .append($('<td></td>').html(dados.nome))
+                                .append($('<td></td>').html(dados.sigla))
+                                .append($('<td class="text-center"></td>').html(`<button class="btn btn-info btn-sm" onclick="edit(event)"> Editar</button><button class="btn btn-danger btn-sm ml-3 text-dark" onclick="remove(event)"> Apagar</button>`))
+                            );
+                        }
+                    });
+
+                submitRef.addEventListener("click", function (e) {
+                    const payload = new FormData(form);
+                    let url = parseInt(form[0].value) !== 0 ? `${API_URL}/Disciplina/update` : `${API_URL}/Disciplina/add`;
+            
+                    if (validate(e, form))
+                        fetch(url, {
+                            method: parseInt(form[0].value) ? 'PUT' : 'POST',
+                            body: payload
+                        }).then(async request => await request.json()).then(()=>{
+                            toatInstance.show();
+                            window.location.reload()
+                        });
+
+                }, false);
+
+                //window load
+            }, false);
+
+            function validate(event, form) {
+                let error = false;
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else {
+                    error = true;
+                }
+                form.classList.add("was-validated");
+
+                return error && (!event.detail || event.detail === 1);
+            }
+        })();
+
+        function edit(event) {
+            const src = JSON.parse(event.target.closest('tr').dataset.src);
+            form[0].value = src.id;
+            form[1].value = src.nome;
+            form[2].value = src.sigla;
+        };
+
+        function reset(event) {
+            form.reset();
+            form[0].value = 0;
+            
+        };
+
+        function remove(event) {
+
+            const src = JSON.parse(event.target.closest('tr').dataset.src);
+
+            if (confirm(`Deseja Realmente excluir a disciplina [${src.id}]?`))
+                fetch(`${API_URL}/Disciplina/delete/${src.id}`,
+                    {
+                        method: "DELETE",
+                    })
+                    .then(_ => {
+                        event.target.closest('tr').remove();
+                    })
+                    .catch(error => console.log(error));
+        };
+
+        function sortTable(event, n) {
+            $(event.target).closest('i').toggleClass('bi-chevron-down bi-chevron-up')
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = $(event.target).closest('table')[0];
+            switching = true;
+            dir = "asc";
+            while (switching) {
+                // Start by saying: no switching is done:
+                switching = false;
+                rows = table.rows;
+
+                for (i = 1; i < (rows.length - 1); i++) {
+
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("td")[n];
+                    y = rows[i + 1].getElementsByTagName("td")[n];
+
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount++;
+                } else {
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">"
+
+    <style>
+        .rating {
+            float: left;
+            border: none;
+        }
+
+        .rating:not(:checked)>input {
+            position: absolute;
+            top: -9999px;
+            clip: rect(0, 0, 0, 0);
+        }
+
+        .rating:not(:checked)>label {
+            float: right;
+            width: 1em;
+            padding: 0 .1em;
+            overflow: hidden;
+            white-space: nowrap;
+            cursor: pointer;
+            font-size: 200%;
+            line-height: 1.2;
+            color: #ddd;
+        }
+
+        .rating:not(:checked)>label:before {
+            content: '★ ';
+        }
+
+        .rating>input:checked~label {
+            color: #f70;
+        }
+
+        .rating:not(:checked)>label:hover,
+        .rating:not(:checked)>label:hover~label {
+            color: gold;
+        }
+
+        .rating>input:checked+label:hover,
+        .rating>input:checked+label:hover~label,
+        .rating>input:checked~label:hover,
+        .rating>input:checked~label:hover~label,
+        .rating>label:hover~input:checked~label {
+            color: #ea0;
+        }
+
+        .rating>label:active {
+            position: relative;
+        }
+    </style>
+
+    <title>Sala de Aula Inteligente Aluno</title>
+
+</head>
+
+<body>
+
+    <div class="container m-5">
+        <div class="row justify-content-center vh-99">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <img width="220" height="220" class="img-thumbnail" src="logo.jpg" alt="logo" srcset>
+                    </div>
+                    <div class="col">
+                        <h2>Sistema de Avaliação - ADS Unilavras </h2>
+                        <br>
+                        <p class="lead">
+                            Participe da avaliação e nos ajude a continuar melhorando. Equipe
+                            <b>Unilavras</b>
+                            Agradece sua Participação!
+                        </p>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col">
+                        <form class="needs-validation" data-action-url="" autocomplete="off" novalidate>
+                            <div class="row mb-5">
+                                <label for="data" class="col-sm-4 col-form-label">Informe a data da aula: </label>
+                                <div class="col">
+                                    <input type="date" name="data" class="form-control" id="data" required>
+                                </div>
+                            </div>
+                            <div class="row mb-5">
+                                <label for="dc" class="col-sm-4 col-form-label">Escolha a disciplina a ser Avaliada:
+                                </label>
+                                <div class="col">
+                                    <select name="idDisciplina" id="dc" class="form-control"
+                                        aria-placeholder="Selecione a Disciplina" required>
+                                        <option value>Selecione a Disciplina</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <fieldset class="row mb-5">
+                                <legend class="col-form-label col-sm-4 pt-0">Qual sua avaliação para aula de hoje:
+                                </legend>
+                                <div class="col">
+                                    <fieldset class="rating">
+                                        <input type="radio" id="star5" name="avaliacao" value="5">
+                                        <label for="star5">
+                                            "5 stars"
+                                        </label>
+                                        <input type="radio" id="star4" name="avaliacao" value="4">
+                                        <label for="star4">
+                                            "4 stars"
+                                        </label>
+                                        <input type="radio" id="star3" name="avaliacao" value="3">
+                                        <label for="star3">
+                                            "3 stars"
+                                        </label>
+                                        <input type="radio" id="star2" name="avaliacao" value="2">
+                                        <label for="star2">
+                                            "2 stars"
+                                        </label>
+                                        <input type="radio" id="star1" name="avaliacao" value="1">
+                                        <label for="star1">
+                                            "1 stars"
+                                        </label>
+                                    </fieldset>
+                                </div>
+                            </fieldset>
+                            <div class="row mb-3">
+                                <label for="inputPassword3" class="col-sm-4 col-form-label">
+                                    "Sinta-se a vontade para deixar seu comentário: "
+                                </label>
+                                <div class="col">
+                                    <textarea class="form-control" name="observacao" cols="30" rows="7"></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <button type="button" data-event="submit" class="btn btn-primary">ENVIAR</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="toast-container position-absolute top-0 end-0 m-5">
+            <div id="toast-container" data-bs-autohide="false"
+                class="toast algin-items-center text-white bg-success border-0" role="alert" aria-live="assertive"
+                aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        "Obrigado! Sua avaliação foi enviada com sucesso!"
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        arial-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script>
+
+        (function () {
+            'use strict'
+
+            const API_URL = "http://localhost:5001/api";
+
+            var form = document.querySelector('.needs-validation')
+            var select = document.querySelector('select');
+            var submitRef = document.querySelector('button[data-event="submit"]');
+            var toatInstance = new bootstrap.Toast(document.getElementById('toast-container'))
+
+            const postResponse = async (response) => {
+                toatInstance.show();
+                form.reset();
+                form.classList.remove("was-validated");
+            }
+
+            window.addEventListener("load", function () {
+
+                fetch(`${API_URL}/Disciplina/listar`)
+                    .then(async (request) => await request.json())
+                    .then(response => {
+                        if (response.length > 0) {
+                            response.forEach((values) => {
+                                let option = new Option(values.nome, values.id);
+                                select.appendChild(option);
+                            })
+                        }
+                    });
+
+                submitRef.addEventListener("click", function (e) {
+                    const payload = new FormData(form);
+
+                    if (validate(e, form))
+                        fetch(`${API_URL}/Avaliacao/cadastrar`, {
+                            method: 'POST',
+                            body: payload
+                        }).then(async request => await request.json()).then(postResponse);
+
+                }, false);
+
+                //window load
+            }, false);
+
+            function validate(event, form) {
+                let error = false;
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else {
+                    error = true;
+                }
+                form.classList.add("was-validated");
+
+                return error && (!event.detail || event.detail === 1);
+            }
+        })()
+    </script>
+
+</body>
+
+</html>
